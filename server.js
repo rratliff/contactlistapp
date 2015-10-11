@@ -1,27 +1,22 @@
 var express = require('express');
 var app = express();
+var mongo = require('mongojs');
+var db = mongo('contactlist', ['contactlist']);
+var bodyParser = require('body-parser');
 
 app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.json());
 
 app.get('/contactlist', function(req, res){
+    db.contactlist.find(function (err, docs) {
+        res.json(docs);
+    });
+});
 
-    person1 = {
-        name: 'tim',
-        email: 'tim@example.com',
-        number: '111-111-1111'
-    };
-    person2 = {
-        name: 'bobby',
-        email: 'bobby@example.com',
-        number: '222-222-2222'
-    };
-    person3 = {
-        name: 'stacy',
-        email: 'stacy@example.com',
-        number: '333-333-3333'
-    };
-    var contactlist = [person1, person2, person3];
-    res.json(contactlist);
+app.post('/contactlist', function(req, res) {
+    db.contactlist.insert(req.body, function(err, doc) {
+        res.json(doc);
+    });
 });
 
 app.listen(3000);
